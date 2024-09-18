@@ -1,7 +1,4 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaSearch, FaList, FaTh } from 'react-icons/fa';
-import CanvasItem from '../components/CanvasItem';
 import CanvasList from '../components/CanvasList';
 import SearchBar from '../components/SearchBar';
 import ViewToggle from '../components/ViewToggle';
@@ -9,7 +6,7 @@ import ViewToggle from '../components/ViewToggle';
 function Home() {
   const [searchText, setSearchText] = useState('');
   const [isGridView, setIsGridView] = useState(true);
-  const dummyData = [
+  const [dummyData, setDummyData] = useState([
     {
       id: 1,
       title: '친환경 도시 농업 플랫폼',
@@ -34,7 +31,11 @@ function Home() {
       lastModified: '2023-06-01',
       category: '여행',
     },
-  ];
+  ]);
+
+  const handleDeleteItem = id => {
+    setDummyData(dummyData.filter(item => item.id !== id));
+  };
 
   const filteredData = dummyData.filter(item =>
     item.title.toLowerCase().includes(searchText.toLocaleLowerCase()),
@@ -50,6 +51,7 @@ function Home() {
         filteredData={filteredData}
         searchText={searchText}
         isGridView={isGridView}
+        onDeleteItem={handleDeleteItem}
       />
     </div>
   );
