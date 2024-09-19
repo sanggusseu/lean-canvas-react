@@ -3,15 +3,27 @@ import CanvasList from '../components/CanvasList';
 import SearchBar from '../components/SearchBar';
 import ViewToggle from '../components/ViewToggle';
 import { getCanvases } from '../api/canvas';
+import Loading from '../components/Loading';
+import Error from '../components/Error';
 
 function Home() {
   const [searchText, setSearchText] = useState();
   const [isGridView, setIsGridView] = useState(true);
   const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   async function fetchData(params) {
-    const response = await getCanvases(params);
-    setData(response.data);
+    try {
+      setIsLoading(true);
+      setError(null);
+      const response = await getCanvases(params);
+      setData(response.data);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setIsLoading(false);
+    }
   }
   useEffect(() => {
     fetchData({ title_like: searchText });
@@ -22,18 +34,27 @@ function Home() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-16">
+    <>
       <div className="mb-6 flex flex-col sm:flex-row items-center justify-between">
         <SearchBar searchText={searchText} setSearchText={setSearchText} />
         <ViewToggle isGridView={isGridView} setIsGridView={setIsGridView} />
       </div>
-      <CanvasList
-        filteredData={data}
-        searchText={searchText}
-        isGridView={isGridView}
-        onDeleteItem={handleDeleteItem}
-      />
-    </div>
+      {isLoading && <Loading />}
+      {error && (
+        <Error
+          message={error.message}
+          onRetry={() => fetchData({ title_like: searchText })}
+        />
+      )}
+      {!isLoading && !error && (
+        <CanvasList
+          filteredData={data}
+          searchText={searchText}
+          isGridView={isGridView}
+          onDeleteItem={handleDeleteItem}
+        />
+      )}
+    </>
   );
 }
 
