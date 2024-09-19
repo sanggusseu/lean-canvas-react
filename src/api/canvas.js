@@ -23,3 +23,7 @@ export function createCanvas() {
   };
   return canvases.post('/', newCanvas);
 }
+
+export async function deleteCanvas(id) {
+  await canvases.delete(`/${id}`);
+}
