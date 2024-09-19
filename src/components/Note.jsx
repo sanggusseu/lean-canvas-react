@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlineCheck, AiOutlineClose } from 'react-icons/ai';
 
-export default function Note({ id, onRemoveNote }) {
+export default function Note({
+  id,
+  content,
+  color: initalColor,
+  onRemoveNote,
+}) {
   const colorOptions = [
     'bg-yellow-300',
     'bg-pink-300',
@@ -9,14 +14,16 @@ export default function Note({ id, onRemoveNote }) {
     'bg-green-300',
   ];
 
-  const randomIndex = Math.floor(Math.random() * colorOptions.length);
-
-  const [color, setColor] = useState(colorOptions[randomIndex]);
+  const [color, setColor] = useState(() => {
+    if (initalColor) return initalColor;
+    const randomIndex = Math.floor(Math.random() * colorOptions.length);
+    return colorOptions[randomIndex];
+  });
 
   const [isEditing, setIsEditing] = useState(false);
 
   const textareaRef = useRef(null);
-  const [content, setContent] = useState('');
+
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height =
@@ -54,7 +61,6 @@ export default function Note({ id, onRemoveNote }) {
       <textarea
         ref={textareaRef}
         value={content}
-        onChange={e => setContent(e.target.value)}
         className={`w-full h-full bg-transparent resize-none border-none focus:outline-none text-gray-900 overflow-hidden`}
         aria-label="Edit Note"
         placeholder="메모를 작성하세요."

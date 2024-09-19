@@ -26,9 +26,8 @@ export default function CanvasDetail() {
 
   return (
     <div>
-      {JSON.stringify(canvas)}
       <CanvasTitle value={canvas?.title} onChange={handleTitleChange} />
-      <LeanCanvas />
+      {canvas && <LeanCanvas canvas={canvas} />}
     </div>
   );
 }
