@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import CanvasList from '../components/CanvasList';
 import SearchBar from '../components/SearchBar';
 import ViewToggle from '../components/ViewToggle';
-import { getCanvases } from '../api/canvas';
+import { createCanvas, getCanvases } from '../api/canvas';
 import Loading from '../components/Loading';
 import Error from '../components/Error';
+import Button from '../components/Button';
 
 function Home() {
   const [searchText, setSearchText] = useState();
@@ -33,11 +34,29 @@ function Home() {
     setData(data.filter(item => item.id !== id));
   };
 
+  const [isLoadingCreate, setIsLoadingCreate] = useState(false);
+  const handleCreateCanvas = async () => {
+    try {
+      setIsLoadingCreate(true);
+      await createCanvas();
+      fetchData({ title_like: searchText });
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setIsLoadingCreate(false);
+    }
+  };
+
   return (
     <>
       <div className="mb-6 flex flex-col sm:flex-row items-center justify-between">
         <SearchBar searchText={searchText} setSearchText={setSearchText} />
         <ViewToggle isGridView={isGridView} setIsGridView={setIsGridView} />
+      </div>
+      <div className="flex justify-end mb-6">
+        <Button onClick={handleCreateCanvas} loading={isLoading}>
+          등록하기
+        </Button>
       </div>
       {isLoading && <Loading />}
       {error && (
