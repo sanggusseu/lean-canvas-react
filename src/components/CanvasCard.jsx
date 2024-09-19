@@ -3,9 +3,28 @@ import Note from './Note';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-export default function CanvasCard({ title, isSubtitle = false, notes = [] }) {
-  const handleAddNote = () => {};
-  const handleRemoveNote = id => {};
+export default function CanvasCard({
+  title,
+  isSubtitle = false,
+  notes = [],
+  onNotesChange,
+}) {
+  const handleAddNote = () => {
+    const newNote = {
+      id: uuidv4(),
+      content: '',
+      color: '',
+    };
+    onNotesChange([...notes, newNote]);
+  };
+  const handleRemoveNote = id => {
+    onNotesChange(notes.filter(note => note.id !== id));
+  };
+  const handleUpdateNote = (id, content, color) => {
+    onNotesChange(
+      notes.map(note => (note.id === id ? { ...note, content, color } : note)),
+    );
+  };
   return (
     <div className="row-span-1 bg-white min-h-48 border border-collapse border-gray-300">
       <div
@@ -27,6 +46,7 @@ export default function CanvasCard({ title, isSubtitle = false, notes = [] }) {
             color={note.color}
             content={note.content}
             onRemoveNote={handleRemoveNote}
+            onUpdateNote={handleUpdateNote}
           />
         ))}
       </div>
