@@ -28,7 +28,9 @@ function Home() {
     queryKey: ['canvases', filter.searchText, filter.category],
     queryFn: () =>
       getCanvases({ title_like: filter.searchText, category: filter.category }),
-    initialData: [],
+    // initialData: [],
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   });
 
   // 2] 등록
